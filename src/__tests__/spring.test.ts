@@ -36,3 +36,15 @@ describe('curve', () => {
     expect(curve({ type: 'spring', damping: 17, stiffness: 210, mass: 0.9 }).easing).toMatch(/^linear\(/);
   });
 });
+
+describe('older browsers', () => {
+  it('falls back to a cubic-bezier when linear() is not supported', () => {
+    const original = globalThis.CSS;
+    (globalThis as any).CSS = { supports: () => false };
+    try {
+      expect(curve({ type: 'spring', damping: 17, stiffness: 210, mass: 0.9 }).easing).toMatch(/^cubic-bezier/);
+    } finally {
+      (globalThis as any).CSS = original;
+    }
+  });
+});

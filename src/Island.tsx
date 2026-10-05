@@ -90,8 +90,9 @@ export function Island({ entry, resume, theme, motion, config, hostWidth, onGone
   // Measure the message (first time, and after each update).
   useLayoutEffect(() => {
     if (!measuring || !probe.current) return;
-    const r = probe.current.getBoundingClientRect();
-    const size = { w: Math.min(maxWidth, Math.ceil(r.width) + 1), h: Math.ceil(r.height) };
+    // layout size, not on-screen size: CSS zoom or a scaled parent must not change it
+    const p = probe.current;
+    const size = { w: Math.min(maxWidth, p.offsetWidth + 1), h: p.offsetHeight };
     if (opened.current && !closing.current) {
       const resize = () => {
         if (!closing.current) sizeTo(size, curve(motion.morph));

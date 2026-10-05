@@ -34,7 +34,11 @@ export function tween(el: HTMLElement | null, to: Props, duration: number, easin
   });
   Object.assign(el.style, toStyle(to));
   if (!el.animate || duration <= 0) return;
-  el.animate([toStyle(from), toStyle(to)] as Keyframe[], { duration, easing });
+  try {
+    el.animate([toStyle(from), toStyle(to)] as Keyframe[], { duration, easing });
+  } catch {
+    // an easing this browser does not know: the end state is already set
+  }
 }
 
 const toKebab = (k: string) => k.replace(/[A-Z]/g, (c) => `-${c.toLowerCase()}`);

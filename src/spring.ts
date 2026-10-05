@@ -32,8 +32,12 @@ export function springEasing(c: { damping: number; stiffness: number; mass: numb
   return out;
 }
 
+const EASE_OUT = 'cubic-bezier(.33,1,.68,1)';
+const linearOk = () => typeof CSS === 'undefined' || !CSS.supports || CSS.supports('transition-timing-function', 'linear(0, 1)');
+
 export function curve(c: Curve): { easing: string; duration: number } {
-  return c.type === 'spring'
-    ? springEasing(c)
-    : { duration: c.duration, easing: c.cssEasing ?? 'cubic-bezier(.33,1,.68,1)' };
+  if (c.type !== 'spring') return { duration: c.duration, easing: c.cssEasing ?? EASE_OUT };
+  const s = springEasing(c);
+  // browsers without linear() get a plain ease-out of the same length
+  return linearOk() ? s : { duration: s.duration, easing: EASE_OUT };
 }

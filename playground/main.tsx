@@ -192,6 +192,10 @@ function App() {
   );
 }
 
+// ?zoom=2 draws the page twice as large (sharper screen recordings)
+const zoom = new URLSearchParams(location.search).get('zoom');
+if (zoom) document.documentElement.style.setProperty('zoom', zoom);
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <App />
