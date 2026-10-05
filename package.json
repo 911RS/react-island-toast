@@ -1,0 +1,62 @@
+{
+  "name": "react-island-toast",
+  "version": "0.1.0",
+  "description": "Dynamic-Island style toasts for React: a big icon that morphs into a message pill. Tiny, zero dependencies, fully customizable.",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist"
+  ],
+  "sideEffects": false,
+  "scripts": {
+    "build": "vite build && tsc -p tsconfig.build.json",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "size": "gzip -9c dist/index.js | wc -c",
+    "playground": "vite --config playground/vite.config.ts"
+  },
+  "keywords": [
+    "react",
+    "toast",
+    "dynamic-island",
+    "notification",
+    "snackbar",
+    "nextjs",
+    "tiny"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/911RS/react-island-toast.git"
+  },
+  "homepage": "https://github.com/911RS/react-island-toast#readme",
+  "bugs": {
+    "url": "https://github.com/911RS/react-island-toast/issues"
+  },
+  "author": "911RS <911RS@users.noreply.github.com> (https://github.com/911RS)",
+  "license": "MIT",
+  "peerDependencies": {
+    "react": ">=18.0.0",
+    "react-dom": ">=18.0.0"
+  },
+  "devDependencies": {
+    "@testing-library/react": "^16.3.3",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.1.2",
+    "jsdom": "^29.1.1",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.2",
+    "vitest": "^5.0.3"
+  }
+}
