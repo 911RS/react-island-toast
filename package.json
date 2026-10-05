@@ -1,6 +1,6 @@
 {
   "name": "react-island-toast",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Dynamic-Island style toasts for React: a big icon that morphs into a message pill. Tiny, zero dependencies, fully customizable.",
   "type": "module",
   "main": "./dist/index.js",
