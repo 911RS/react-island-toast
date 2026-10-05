@@ -20,7 +20,7 @@
 </p>
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/911RS/react-island-toast/main/media/hero.gif" alt="An island opens on a big tick, then turns into the message" width="520" />
+  <img src="https://raw.githubusercontent.com/911RS/react-island-toast/main/media/island.gif" alt="An island opens on a big tick, then turns into the message" width="520" />
 </p>
 
 ## Why
