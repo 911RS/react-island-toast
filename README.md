@@ -36,7 +36,7 @@ One line, and a black island grows out of the top of the page, pops a big icon, 
 
 - **Tiny.** About 7 kB gzipped, zero dependencies. Only `react` and `react-dom` as peers.
 - **Smooth.** Real springs, played by the browser through the Web Animations API. Every open, morph and close is one continuous motion.
-- **On top of everything.** Lives in the browser's top layer, so it shows above `<dialog>` modals.
+- **On top of everything.** Lives in the browser's top layer; while a modal `<dialog>` is open, it opens inside it, so it stays visible and clickable.
 - **Yours.** Colors, sizes, corners, fonts, timings, curves, icons, `classNames` for Tailwind, slots for every part.
 - **Smart queue.** A new message closes the current one smoothly, then opens. Or queue them all, or replace at once.
 - **For everyone.** Screen reader live regions, keyboard (Escape closes it), reduced motion, RTL, a separate font for Arabic.
@@ -123,7 +123,7 @@ island.info('Message archived', {
 });
 ```
 
-The action is a real button, reachable with the keyboard. With an action, the message reads longer (3.5 s instead of 1.6 s).
+The action is a real button. With an action, the message reads longer (3.5 s instead of 1.6 s), and it waits while the pointer or the focus is on it.
 
 ### Update a message on screen
 
@@ -197,7 +197,7 @@ Slots: `renderIcon`, `renderTitle`, `renderBody`, `renderAction`, `renderContent
 
 ## Configuration
 
-Wrap your app in `IslandProvider` to change the defaults. Every key is optional.
+Wrap your app in `IslandProvider` to change the defaults, and keep `<IslandHost />` inside it. Every key is optional.
 
 ```tsx
 <IslandProvider
@@ -209,6 +209,7 @@ Wrap your app in `IslandProvider` to change the defaults. Every key is optional.
   }}
 >
   <App />
+  <IslandHost />
 </IslandProvider>
 ```
 
@@ -307,12 +308,14 @@ Unknown ids are ignored, so `dismiss` and `update` are always safe to call.
 ## Accessibility
 
 - Messages are read by screen readers through live regions: errors right away, the others politely. A promise's result is read too.
-- Escape closes the island. Its action is a real, focusable button.
+- Escape closes the island (unless something else already handled that Escape). Its action is a real button; while the pointer or the focus is on the island, it stays open.
 - With `prefers-reduced-motion`, it simply fades in and out.
 
 ## Browsers
 
-Chrome, Edge, Firefox and Safari with the Web Animations API and CSS `linear()` easing (2023 and later). On older browsers springs fall back gracefully, and without the popover API the island uses a very high `z-index` instead of the top layer.
+Chrome, Edge, Firefox and Safari with the Web Animations API and CSS `linear()` easing (2023 and later). On older browsers springs fall back to a plain ease-out, and without the popover API the island uses a very high `z-index` instead of the top layer.
+
+The package is ESM only. Node 20.19+ and 22+ can `require()` it; Jest setups that do not transform `node_modules` need it added to `transformIgnorePatterns`.
 
 ## Playground
 

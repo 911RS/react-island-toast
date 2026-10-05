@@ -1,4 +1,4 @@
-import type { IslandMessage, QueueMode } from './types';
+import type { IslandMessage, QueueMode } from './types.js';
 
 export interface LiveEntry {
   message: IslandMessage;

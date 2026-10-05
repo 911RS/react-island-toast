@@ -181,7 +181,7 @@ function App() {
 
       <dialog ref={dialog} onClick={(e) => e.target === dialog.current && dialog.current?.close()}>
         <h3>Checkout</h3>
-        <p>The island opens above this dialog. Press Escape to close the island, then again for the dialog.</p>
+        <p>While a dialog is open, the island opens inside it, so it stays on top and clickable.</p>
         <div className="btns">
           <B onClick={() => island.success('Coupon applied', { body: '−10 %' })}>Show a message</B>
           <B onClick={() => dialog.current?.close()}>Close</B>

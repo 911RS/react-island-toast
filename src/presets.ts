@@ -1,4 +1,4 @@
-import type { IslandMotion, PresetName } from './types';
+import type { IslandMotion, PresetName } from './types.js';
 
 const spring = (damping: number, stiffness: number, mass: number) =>
   ({ type: 'spring', damping, stiffness, mass }) as const;

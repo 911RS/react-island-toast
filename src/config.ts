@@ -1,11 +1,11 @@
-import { PRESETS } from './presets';
+import { PRESETS } from './presets.js';
 import type {
   IslandConfig,
   IslandMessage,
   IslandMotion,
   IslandTheme,
   IslandType,
-} from './types';
+} from './types.js';
 
 export const TYPE_ACCENTS: Record<
   'success' | 'error' | 'info' | 'loading',

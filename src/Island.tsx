@@ -7,12 +7,12 @@ import {
   type CSSProperties,
   type PointerEvent as RPointerEvent,
 } from 'react';
-import { fontFor } from './config';
-import { tween, useMedia } from './dom';
-import { defaultIconFor } from './icons';
-import { renderIcon } from './renderIcon';
-import { curve } from './spring';
-import { store, type LiveEntry } from './store';
+import { fontFor } from './config.js';
+import { tween, useMedia } from './dom.js';
+import { defaultIconFor } from './icons.js';
+import { renderIcon } from './renderIcon.js';
+import { curve } from './spring.js';
+import { store, type LiveEntry } from './store.js';
 import type {
   IslandConfig,
   IslandMessage,
@@ -20,7 +20,7 @@ import type {
   IslandSlots,
   IslandTheme,
   SlotProps,
-} from './types';
+} from './types.js';
 
 export interface IslandProps {
   entry: LiveEntry;
@@ -61,7 +61,9 @@ export function Island({ entry, resume, theme, motion, config, hostWidth, onGone
   const [measured, setMeasured] = useState<Size | null>(null);
   const [fontsTick, setFontsTick] = useState(0);
   const [measuredTick, setMeasuredTick] = useState(0);
-  const measuring = shown !== m || !measured || fontsTick !== measuredTick;
+  const [measuredMax, setMeasuredMax] = useState(0);
+  const measuring =
+    shown !== m || !measured || fontsTick !== measuredTick || measuredMax !== maxWidth;
 
   const shell = useRef<HTMLDivElement>(null);
   const body = useRef<HTMLDivElement>(null);
@@ -93,7 +95,8 @@ export function Island({ entry, resume, theme, motion, config, hostWidth, onGone
     // layout size, not on-screen size: CSS zoom or a scaled parent must not change it
     const p = probe.current;
     const size = { w: Math.min(maxWidth, p.offsetWidth + 1), h: p.offsetHeight };
-    if (opened.current && !closing.current) {
+    const same = !!measured && measured.w === size.w && measured.h === size.h && shown === m;
+    if (opened.current && !closing.current && !same) {
       const resize = () => {
         if (!closing.current) sizeTo(size, curve(motion.morph));
       };
@@ -110,6 +113,7 @@ export function Island({ entry, resume, theme, motion, config, hostWidth, onGone
     setShown(m);
     setMeasured(size);
     setMeasuredTick(fontsTick);
+    setMeasuredMax(maxWidth);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [m, measuring]);
 
@@ -178,6 +182,8 @@ export function Island({ entry, resume, theme, motion, config, hostWidth, onGone
     if (closing.current) return;
     closing.current = true;
     store.beginClose(m.id);
+    // focus inside the island goes back where it came from
+    if (shell.current?.contains(document.activeElement)) (before.current as HTMLElement | null)?.focus?.();
     timers.current.forEach(clearTimeout);
     timers.current = [];
     const s = shell.current;
@@ -199,11 +205,20 @@ export function Island({ entry, resume, theme, motion, config, hostWidth, onGone
     later(540, finish);
   }, [reduced, theme, finish, m.id]);
 
+  // the countdown pauses while the pointer or the focus is on the island
+  const [paused, setPaused] = useState(false);
+  const [resumeAt, setResumeAt] = useState(0);
   useEffect(() => {
-    if (!Number.isFinite(entry.until)) return;
-    const t = setTimeout(close, Math.max(400, entry.until - Date.now()));
+    if (paused || !Number.isFinite(entry.until)) return;
+    const left = Math.max(entry.until - Date.now(), resumeAt ? 1500 : 400);
+    const t = setTimeout(close, left);
     return () => clearTimeout(t);
-  }, [close, entry.until]);
+  }, [close, entry.until, paused, resumeAt]);
+  const pause = (on: boolean) => {
+    setPaused(on);
+    if (!on) setResumeAt(Date.now());
+  };
+  const before = useRef<Element | null>(null);
 
   useEffect(
     () =>
@@ -215,7 +230,7 @@ export function Island({ entry, resume, theme, motion, config, hostWidth, onGone
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') close();
+      if (e.key === 'Escape' && !e.defaultPrevented && !e.isComposing) close();
     };
     document.addEventListener('keydown', onKey);
     return () => document.removeEventListener('keydown', onKey);
@@ -231,14 +246,18 @@ export function Island({ entry, resume, theme, motion, config, hostWidth, onGone
   };
   const onPointerDown = (e: RPointerEvent) => {
     if (!config.swipeToDismiss) return;
+    // a press on a button or link inside stays theirs
+    if ((e.target as Element).closest?.('button, a, input, select, textarea, [role=button]:not([data-island])')) return;
     gesture.current = { y: e.clientY, t: performance.now(), moved: false };
-    (e.currentTarget as HTMLElement).setPointerCapture?.(e.pointerId);
   };
   const onPointerMove = (e: RPointerEvent) => {
     const g = gesture.current;
     if (!g) return;
     const dy = e.clientY - g.y;
-    if (Math.abs(dy) > 6) g.moved = true;
+    if (!g.moved && Math.abs(dy) > 6) {
+      g.moved = true;
+      (e.currentTarget as HTMLElement).setPointerCapture?.(e.pointerId);
+    }
     const out = top ? dy < 0 : dy > 0;
     setDrag(out ? dy : dy * 0.2);
   };
@@ -359,7 +378,8 @@ export function Island({ entry, resume, theme, motion, config, hostWidth, onGone
       <div ref={drag} style={st.drag}>
         <div
           ref={shell}
-          role="button"
+          data-island=""
+          role={m.action || m.renderAction || m.renderContent ? 'group' : 'button'}
           tabIndex={-1}
           aria-label={m.accessibilityLabel ?? [m.title, m.body].filter(Boolean).join('. ')}
           aria-description={config.tapToDismiss ? (config.accessibilityHint ?? 'Dismiss') : undefined}
@@ -369,12 +389,22 @@ export function Island({ entry, resume, theme, motion, config, hostWidth, onGone
           onPointerMove={onPointerMove}
           onPointerUp={onPointerUp}
           onPointerCancel={onPointerUp}
+          onPointerEnter={() => pause(true)}
+          onPointerLeave={() => pause(false)}
+          onFocus={(e) => {
+            if (!before.current) before.current = e.relatedTarget as Element | null;
+            pause(true);
+          }}
+          onBlur={(e) => {
+            if (!e.currentTarget.contains(e.relatedTarget as Node)) pause(false);
+          }}
           style={{
             ...st.island,
             width: theme.pillWidth,
             height: theme.pillHeight,
             borderRadius: theme.pillHeight / 2,
             background: theme.background,
+            color: theme.title,
             border: `0.5px solid ${theme.border}`,
             boxShadow: theme.shadow,
           }}

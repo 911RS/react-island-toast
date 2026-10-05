@@ -1,4 +1,4 @@
-import type { Curve } from './types';
+import type { Curve } from './types.js';
 
 const MAX_MS = 3000;
 const POINTS = 40;

@@ -1,11 +1,11 @@
-import { DEFAULT_CONFIG, lifeMs, resolveMotion } from './config';
-import { store } from './store';
+import { DEFAULT_CONFIG, lifeMs, resolveMotion } from './config.js';
+import { store } from './store.js';
 import type {
   IslandConfig,
   IslandMessage,
   IslandOptions,
   IslandType,
-} from './types';
+} from './types.js';
 
 export type ShowInput = IslandOptions & { title: string; type?: IslandType };
 type PromiseMessage<A> = string | ShowInput | ((arg: A) => string | ShowInput);

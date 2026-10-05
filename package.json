@@ -22,7 +22,8 @@
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
     "size": "gzip -9c dist/index.js | wc -c",
-    "playground": "vite --config playground/vite.config.ts"
+    "playground": "vite --config playground/vite.config.ts",
+    "prepublishOnly": "npm run build && npm test"
   },
   "keywords": [
     "react",

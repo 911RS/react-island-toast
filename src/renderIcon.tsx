@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import type { IconSpec } from './types';
+import type { IconSpec } from './types.js';
 
 /** Draws an icon given as an element, or as a function/component taking size and color. */
 export function renderIcon(

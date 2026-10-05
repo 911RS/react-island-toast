@@ -1,11 +1,11 @@
 import { useEffect, useLayoutEffect, useRef, useState, useSyncExternalStore } from 'react';
 import { createPortal } from 'react-dom';
-import { setAnnouncer } from './api';
-import { resolveMotion, resolveTheme } from './config';
-import { useMedia } from './dom';
-import { Island } from './Island';
-import { useIslandConfig } from './IslandProvider';
-import { store } from './store';
+import { setAnnouncer } from './api.js';
+import { resolveMotion, resolveTheme } from './config.js';
+import { useMedia } from './dom.js';
+import { Island } from './Island.js';
+import { useIslandConfig } from './IslandProvider.js';
+import { store } from './store.js';
 
 const getLive = () => store.get();
 const getNull = () => null;
@@ -35,6 +35,8 @@ export function IslandHost() {
   const layer = useRef<HTMLDivElement>(null);
   const polite = useRef<HTMLDivElement>(null);
   const assertive = useRef<HTMLDivElement>(null);
+  // An open modal <dialog> makes the rest of the page inert: draw inside it while it is open.
+  const [root, setRoot] = useState<Element | null>(null);
 
   useEffect(() => {
     setMounted(true);
@@ -67,8 +69,23 @@ export function IslandHost() {
     return () => setAnnouncer(null);
   }, [isTop]);
 
-  // each new message moves the layer to the top of the top layer (above a dialog opened since)
   const id = entry?.message.id;
+  useLayoutEffect(() => {
+    if (!mounted) return;
+    let modal: Element | null = null;
+    try {
+      const all = document.querySelectorAll('dialog');
+      modal = document.querySelector('dialog:modal') ?? null;
+      if (!modal) all.forEach((d) => d.matches?.(':modal') && (modal = d));
+    } catch {}
+    setRoot(modal ?? document.body);
+    if (!modal) return;
+    const back = () => setRoot(document.body);
+    modal.addEventListener('close', back);
+    return () => modal?.removeEventListener('close', back);
+  }, [id, mounted]);
+
+  // each new message moves the layer to the top of the top layer (above a dialog opened since)
   useLayoutEffect(() => {
     const el = layer.current;
     if (!el || !canPopover() || id === undefined) return;
@@ -76,9 +93,9 @@ export function IslandHost() {
       if (el.matches(':popover-open')) el.hidePopover();
       el.showPopover();
     } catch {}
-  }, [id, mounted, isTop]);
+  }, [id, mounted, isTop, root]);
 
-  if (!mounted || !isTop || hostId === null) return null;
+  if (!mounted || !isTop || hostId === null || !root) return null;
   const dark = config.colorScheme === 'auto' ? prefersDark : config.colorScheme === 'dark';
   const edge = `calc(env(safe-area-inset-${config.position === 'top' ? 'top' : 'bottom'}, 0px) + ${6 + config.offset}px)`;
 
@@ -124,6 +141,6 @@ export function IslandHost() {
       <div ref={polite} role="status" aria-live="polite" style={hidden} />
       <div ref={assertive} role="alert" aria-live="assertive" style={hidden} />
     </>,
-    document.body
+    root
   );
 }

@@ -5,10 +5,10 @@ import {
   useSyncExternalStore,
   type ReactNode,
 } from 'react';
-import { getGlobalConfig, island, setGlobalConfig } from './api';
-import { DEFAULT_CONFIG, deepMerge } from './config';
-import { store } from './store';
-import type { IslandConfig, IslandMessage } from './types';
+import { getGlobalConfig, island, setGlobalConfig } from './api.js';
+import { DEFAULT_CONFIG, deepMerge } from './config.js';
+import { store } from './store.js';
+import type { IslandConfig, IslandMessage } from './types.js';
 
 const ConfigContext = createContext<IslandConfig | null>(null);
 

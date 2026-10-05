@@ -1,4 +1,4 @@
-import type { IconSpec, IslandType } from './types';
+import type { IconSpec, IslandType } from './types.js';
 
 type P = { size: number; color: string };
 const svg = (size: number) => ({
