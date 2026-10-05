@@ -89,10 +89,10 @@ export function IslandHost() {
         {...(canPopover() ? { popover: 'manual' } : {})}
         style={{
           position: 'fixed',
-          inset: 'auto',
           left: 0,
           right: 0,
-          [config.position === 'top' ? 'top' : 'bottom']: edge,
+          top: config.position === 'top' ? edge : 'auto',
+          bottom: config.position === 'top' ? 'auto' : edge,
           width: '100%',
           margin: 0,
           padding: 0,

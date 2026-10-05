@@ -59,7 +59,9 @@ export function Island({ entry, resume, theme, motion, config, hostWidth, onGone
   // The message on screen; a new one (update) is measured first, then swapped in.
   const [shown, setShown] = useState<IslandMessage>(m);
   const [measured, setMeasured] = useState<Size | null>(null);
-  const measuring = shown !== m || !measured;
+  const [fontsTick, setFontsTick] = useState(0);
+  const [measuredTick, setMeasuredTick] = useState(0);
+  const measuring = shown !== m || !measured || fontsTick !== measuredTick;
 
   const shell = useRef<HTMLDivElement>(null);
   const body = useRef<HTMLDivElement>(null);
@@ -106,8 +108,22 @@ export function Island({ entry, resume, theme, motion, config, hostWidth, onGone
     }
     setShown(m);
     setMeasured(size);
+    setMeasuredTick(fontsTick);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [m, measuring]);
+
+  // a web font that finishes loading changes the text width: measure again
+  useEffect(() => {
+    const fonts = typeof document !== 'undefined' ? document.fonts : undefined;
+    if (!fonts) return;
+    let live = true;
+    const again = () => live && setFontsTick((t) => t + 1);
+    fonts.addEventListener?.('loadingdone', again);
+    return () => {
+      live = false;
+      fonts.removeEventListener?.('loadingdone', again);
+    };
+  }, []);
 
   // Opening, once the first size is known.
   useLayoutEffect(() => {

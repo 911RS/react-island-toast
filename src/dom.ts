@@ -22,7 +22,11 @@ export function tween(el: HTMLElement | null, to: Props, duration: number, easin
   const cs = getComputedStyle(el);
   const from: Props = {};
   for (const k of Object.keys(to)) from[k] = cs.getPropertyValue(toKebab(k)) || (el.style as any)[k] || '';
+  // only take over animations on the same properties; the others keep running
+  const keys = Object.keys(to);
   el.getAnimations?.().forEach((a) => {
+    const frames = (a.effect as KeyframeEffect | null)?.getKeyframes?.() ?? [];
+    if (!frames.some((f) => keys.some((k) => k in f))) return;
     try {
       a.commitStyles();
     } catch {}

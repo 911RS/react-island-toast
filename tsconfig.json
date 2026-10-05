@@ -12,7 +12,7 @@
     "verbatimModuleSyntax": true,
     "skipLibCheck": true,
     "noEmit": true,
-    "types": ["vitest/globals"],
+    "types": ["vitest/globals", "node"],
     "paths": { "react-island-toast": ["./src/index.ts"] }
   },
   "include": ["src", "playground"]
