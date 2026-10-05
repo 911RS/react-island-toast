@@ -13,7 +13,9 @@
 <p align="center">
   <img src="https://raw.githubusercontent.com/911RS/react-island-toast/main/media/hero.gif" alt="An island opens on a big tick, then turns into the message" width="540" />
   <br />
-  <sub><a href="https://github.com/911RS/react-island-toast/blob/main/media/demo.mp4">▶ Watch the 40-second tour</a></sub>
+  <a href="https://911rs.github.io/react-island-toast/"><b>Try the live demo →</b></a>
+  <br />
+  <sub><a href="https://github.com/911RS/react-island-toast/blob/main/media/demo.mp4">▶ or watch the 40-second tour</a></sub>
 </p>
 
 <p align="center">
@@ -318,6 +320,8 @@ Chrome, Edge, Firefox and Safari with the Web Animations API and CSS `linear()` 
 The package is ESM only. Node 20.19+ and 22+ can `require()` it; Jest setups that do not transform `node_modules` need it added to `transformIgnorePatterns`.
 
 ## Playground
+
+Live: **[911rs.github.io/react-island-toast](https://911rs.github.io/react-island-toast/)**. To run it locally:
 
 ```sh
 git clone https://github.com/911RS/react-island-toast && cd react-island-toast
