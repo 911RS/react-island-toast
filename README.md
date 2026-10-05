@@ -4,7 +4,7 @@
 
 <p align="center">
   <a href="https://www.npmjs.com/package/react-island-toast"><img src="https://img.shields.io/npm/v/react-island-toast?color=34C759&label=npm" alt="npm version" /></a>
-  <img src="https://img.shields.io/badge/gzip-%E2%89%88%207%20kB-34C759" alt="about 7 kB gzipped" />
+  <img src="https://img.shields.io/badge/gzip-%E2%89%88%208%20kB-34C759" alt="about 8 kB gzipped" />
   <img src="https://img.shields.io/badge/dependencies-0-34C759" alt="zero dependencies" />
   <img src="https://img.shields.io/badge/types-TypeScript-0A84FF" alt="TypeScript" />
   <a href="LICENSE"><img src="https://img.shields.io/npm/l/react-island-toast?color=8E8E93" alt="license" /></a>
@@ -34,7 +34,7 @@ One line, and a black island grows out of the top of the page, pops a big icon, 
 
 ## Highlights
 
-- **Tiny.** About 7 kB gzipped, zero dependencies. Only `react` and `react-dom` as peers.
+- **Tiny.** About 8 kB gzipped, zero dependencies. Only `react` and `react-dom` as peers.
 - **Smooth.** Real springs, played by the browser through the Web Animations API. Every open, morph and close is one continuous motion.
 - **On top of everything.** Lives in the browser's top layer; while a modal `<dialog>` is open, it opens inside it, so it stays visible and clickable.
 - **Yours.** Colors, sizes, corners, fonts, timings, curves, icons, `classNames` for Tailwind, slots for every part.
