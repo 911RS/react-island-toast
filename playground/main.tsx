@@ -195,6 +195,8 @@ function App() {
 // ?zoom=2 draws the page twice as large (sharper screen recordings)
 const zoom = new URLSearchParams(location.search).get('zoom');
 if (zoom) document.documentElement.style.setProperty('zoom', zoom);
+// ?bare=1 hides the page, leaving only the island (for recordings)
+if (new URLSearchParams(location.search).get('bare')) document.documentElement.classList.add('bare');
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

@@ -34,3 +34,4 @@ dialog::backdrop { background: rgba(0, 0, 0, .35); }
 dialog h3 { margin: 0 0 6px; }
 dialog p { color: var(--soft); font-size: 14px; margin: 0 0 16px; }
 @media (max-width: 520px) { .wrap { padding-top: 96px; } }
+.bare main { visibility: hidden; }

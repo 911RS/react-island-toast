@@ -3,59 +3,44 @@
 </p>
 
 <p align="center">
-  <a href="https://www.npmjs.com/package/react-island-toast"><img src="https://img.shields.io/npm/v/react-island-toast?color=34C759&label=npm" alt="npm version" /></a>
+  <a href="https://www.npmjs.com/package/react-island-toast"><img src="https://img.shields.io/npm/v/react-island-toast?color=34C759&label=npm&cacheSeconds=3600" alt="npm version" /></a>
   <img src="https://img.shields.io/badge/gzip-%E2%89%88%208%20kB-34C759" alt="about 8 kB gzipped" />
   <img src="https://img.shields.io/badge/dependencies-0-34C759" alt="zero dependencies" />
   <img src="https://img.shields.io/badge/types-TypeScript-0A84FF" alt="TypeScript" />
-  <a href="LICENSE"><img src="https://img.shields.io/npm/l/react-island-toast?color=8E8E93" alt="license" /></a>
+  <img src="https://img.shields.io/badge/license-MIT-8E8E93" alt="MIT license" />
 </p>
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/911RS/react-island-toast/main/media/hero.gif" alt="An island opens on a big tick, then turns into the message" width="540" />
-  <br />
-  <a href="https://911rs.github.io/react-island-toast/"><b>Try the live demo →</b></a>
-  <br />
-  <sub><a href="https://github.com/911RS/react-island-toast/blob/main/media/demo.mp4">▶ or watch the 40-second tour</a></sub>
+  <a href="https://911rs.github.io/react-island-toast/"><b>Live demo</b></a> ·
+  <a href="#get-started">Get started</a> ·
+  <a href="#examples">Examples</a> ·
+  <a href="#customize">Customize</a> ·
+  <a href="#api">API</a> ·
+  <a href="https://github.com/911RS/react-native-island-toast">React Native version</a>
 </p>
 
 <p align="center">
-  <b>Building a mobile app?</b> The same island for React Native: <a href="https://github.com/911RS/react-native-island-toast"><b>react-native-island-toast</b></a>
+  <img src="https://raw.githubusercontent.com/911RS/react-island-toast/main/media/hero.gif" alt="An island opens on a big tick, then turns into the message" width="520" />
 </p>
 
-<br />
+## Why
 
-```tsx
-island.success('Order shipped', { body: 'Arrives Friday' });
-```
+- **One line.** `island.success('Saved')`, from anywhere, even outside React.
+- **Tiny.** About 8 kB gzipped. Zero dependencies.
+- **Smooth.** Real springs played by the browser. Open, morph and close are one continuous motion.
+- **Always on top.** Above your page and inside open `<dialog>` modals, still clickable.
+- **Yours.** Every color, size, font, timing and part can be changed.
 
-One line, and a black island grows out of the top of the page, pops a big icon, then turns into your message. When it is done, it folds back and fades away in one smooth motion.
-
-<br />
-
-<img src="https://raw.githubusercontent.com/911RS/react-island-toast/main/media/showcase.png" alt="Success, error, promise, undo, custom icons, Arabic fonts and light theme islands" width="100%" />
-
-## Highlights
-
-- **Tiny.** About 8 kB gzipped, zero dependencies. Only `react` and `react-dom` as peers.
-- **Smooth.** Real springs, played by the browser through the Web Animations API. Every open, morph and close is one continuous motion.
-- **On top of everything.** Lives in the browser's top layer; while a modal `<dialog>` is open, it opens inside it, so it stays visible and clickable.
-- **Yours.** Colors, sizes, corners, fonts, timings, curves, icons, `classNames` for Tailwind, slots for every part.
-- **Smart queue.** A new message closes the current one smoothly, then opens. Or queue them all, or replace at once.
-- **For everyone.** Screen reader live regions, keyboard (Escape closes it), reduced motion, RTL, a separate font for Arabic.
-- **Works everywhere.** Vite, Next.js (App Router and server rendering), Remix, any React 18 or 19 app.
-
-## Install
+## Get started
 
 ```sh
 npm install react-island-toast
 ```
 
-## Quick start
-
-**1.** Mount the host once, anywhere in your app:
+Mount the host once, then call `island` from anywhere:
 
 ```tsx
-import { IslandHost } from 'react-island-toast';
+import { IslandHost, island } from 'react-island-toast';
 
 export default function App() {
   return (
@@ -65,23 +50,134 @@ export default function App() {
     </>
   );
 }
-```
-
-**2.** Show a message from anywhere, even outside React:
-
-```tsx
-import { island } from 'react-island-toast';
 
 island.success('Order shipped', { body: 'Arrives Friday' });
 island.error('Payment failed', { body: 'Card declined' });
 island.info('New message', { body: 'From Sam' });
 ```
 
-That's it.
+Works with Vite, Next.js (App Router and server rendering), Remix and any React 18 or 19 app.
 
-### Next.js
+## Examples
 
-The package is marked `'use client'` and renders nothing on the server. Put the host in your root layout:
+<img src="https://raw.githubusercontent.com/911RS/react-island-toast/main/media/showcase.png" alt="Success, error, promise, undo, custom icons, Arabic fonts and light theme islands" width="100%" />
+
+<details>
+<summary><b>Promise</b>: a spinner, then the result in the same island</summary>
+
+```tsx
+island.promise(saveProfile(form), {
+  loading: 'Saving',
+  success: 'Profile saved',
+  error: (e) => ({ title: 'Could not save', body: e.message }),
+});
+```
+
+It returns your promise, so `await` and `.catch` work as usual.
+
+</details>
+
+<details>
+<summary><b>Undo</b>: an action button that reads longer</summary>
+
+```tsx
+island.info('Message archived', {
+  action: { label: 'Undo', icon: UndoIcon, onPress: restore },
+});
+```
+
+With an action, the message reads 3.5 s instead of 1.6 s, and it waits while the pointer or the focus is on it.
+
+</details>
+
+<details>
+<summary><b>Update</b>: change a message that is on screen</summary>
+
+```tsx
+const id = island.info('Looking for a driver', { duration: Infinity });
+
+island.update(id, {
+  type: 'success',
+  title: 'Driver found',
+  body: 'Alex, 4 min away',
+  duration: 2000,
+});
+```
+
+</details>
+
+<details>
+<summary><b>Icons</b>: bring any icon set</summary>
+
+```tsx
+import { Utensils } from 'lucide-react';
+
+island.success('Table booked', {
+  icon: ({ size, color }) => <Utensils size={size} color={color} />,
+});
+```
+
+`heroIcon` sets a different icon for the big opening.
+
+</details>
+
+<details>
+<summary><b>Your own types</b>: register a type with its own colors</summary>
+
+```tsx
+<IslandProvider config={{ types: { upload: { light: { accent: '#BF5AF2' } } } }}>
+
+island.show({ type: 'upload', title: 'Photo uploaded', icon: UploadIcon });
+```
+
+</details>
+
+<details>
+<summary><b>Fonts</b>: one for Latin, one for Arabic</summary>
+
+```tsx
+<IslandProvider
+  config={{
+    theme: {
+      fontFamily: "'Inter', sans-serif",
+      arabicFontFamily: "'Cairo', sans-serif",
+    },
+  }}
+>
+```
+
+Each line picks its font by script. If a web font loads after the island opened, it resizes to fit.
+
+</details>
+
+<details>
+<summary><b>Tailwind</b>: add class names to any part</summary>
+
+```tsx
+<IslandProvider config={{ classNames: { island: 'ring-1 ring-white/10', title: 'tracking-tight' } }}>
+```
+
+Keys: `island`, `content`, `icon`, `title`, `body`, `action`.
+
+</details>
+
+<details>
+<summary><b>Custom content</b>: replace any part with your own component</summary>
+
+```tsx
+island.show({
+  title: 'Storage almost full',
+  type: 'error',
+  renderContent: ({ theme }) => <StorageBar value={0.92} color={theme.accent} />,
+});
+```
+
+Slots: `renderIcon`, `renderTitle`, `renderBody`, `renderAction`, `renderContent`. Each gets `{ message, theme, dismiss }` and can use hooks.
+
+</details>
+
+<details>
+<summary><b>Next.js</b>: put the host in the root layout</summary>
 
 ```tsx
 // app/layout.tsx
@@ -99,113 +195,19 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 }
 ```
 
-Call `island.success(...)` from any client component.
+The package is marked `'use client'` and renders nothing on the server. Call `island` from any client component.
 
-## Recipes
+</details>
 
-### Promise
+## Customize
 
-A spinner while it runs, then the result in the same island.
-
-```tsx
-island.promise(saveProfile(form), {
-  loading: 'Saving',
-  success: 'Profile saved',
-  error: (e) => ({ title: 'Could not save', body: e.message }),
-});
-```
-
-It returns your promise, so `await` and `.catch` work as usual.
-
-### Undo
-
-```tsx
-island.info('Message archived', {
-  action: { label: 'Undo', icon: UndoIcon, onPress: restore },
-});
-```
-
-The action is a real button. With an action, the message reads longer (3.5 s instead of 1.6 s), and it waits while the pointer or the focus is on it.
-
-### Update a message on screen
-
-```tsx
-const id = island.info('Looking for a driver', { duration: Infinity });
-// later
-island.update(id, {
-  type: 'success',
-  title: 'Driver found',
-  body: 'Alex, 4 min away',
-  duration: 2000,
-});
-```
-
-### Your own icons
-
-```tsx
-import { Utensils } from 'lucide-react';
-
-island.success('Table booked', {
-  icon: ({ size, color }) => <Utensils size={size} color={color} />,
-});
-```
-
-Any icon set works. `heroIcon` sets a different icon for the big opening.
-
-### Your own types
-
-```tsx
-<IslandProvider config={{ types: { upload: { light: { accent: '#BF5AF2' } } } }}>
-
-island.show({ type: 'upload', title: 'Photo uploaded', icon: UploadIcon });
-```
-
-### Fonts, including Arabic
-
-Each line picks its font: text with Arabic letters gets the Arabic font, everything else the Latin one. If a web font loads after the island opened, it resizes to fit.
-
-```tsx
-<IslandProvider
-  config={{
-    theme: {
-      fontFamily: "'Inter', sans-serif",
-      arabicFontFamily: "'Cairo', sans-serif",
-    },
-  }}
->
-```
-
-### Tailwind and class names
-
-```tsx
-<IslandProvider config={{ classNames: { island: 'ring-1 ring-white/10', title: 'tracking-tight' } }}>
-```
-
-Keys: `island`, `content`, `icon`, `title`, `body`, `action`.
-
-### Your own content
-
-Replace any part with a slot. Slots are components, so they can use hooks.
-
-```tsx
-island.show({
-  title: 'Storage almost full',
-  type: 'error',
-  renderContent: ({ theme }) => <StorageBar value={0.92} color={theme.accent} />,
-});
-```
-
-Slots: `renderIcon`, `renderTitle`, `renderBody`, `renderAction`, `renderContent`. Each gets `{ message, theme, dismiss }`.
-
-## Configuration
-
-Wrap your app in `IslandProvider` to change the defaults, and keep `<IslandHost />` inside it. Every key is optional.
+Wrap your app in `IslandProvider` and keep the host inside it. Every key is optional.
 
 ```tsx
 <IslandProvider
   config={{
     preset: 'snappy',
-    queue: 'replace-latest',
+    position: 'top',
     theme: { radius: 18, accent: '#FF9F0A' },
     darkTheme: { background: '#000' },
   }}
@@ -215,22 +217,21 @@ Wrap your app in `IslandProvider` to change the defaults, and keep `<IslandHost 
 </IslandProvider>
 ```
 
-Layers apply in order, each over the one before: library defaults → `theme` → `darkTheme` (in dark mode) → `types[type]` → the call's own `theme`.
-
 **Presets:** `snappy` · `calm` · `bouncy` · `minimal` (no big icon).
+Settings apply in layers: defaults → `theme` → `darkTheme` → `types[type]` → the message's own `theme`.
 
 <details>
-<summary><b>Behavior</b></summary>
+<summary><b>Behavior options</b></summary>
 
 | Key | What it does | Default |
 | --- | --- | --- |
-| `queue` | `'replace-latest'`: the current one closes, the newest waits, older ones are dropped. `'queue-all'`: each one shows in turn. `'replace-now'`: swap at once. | `'replace-latest'` |
+| `queue` | `'replace-latest'`: the current one closes, the newest waits. `'queue-all'`: each in turn. `'replace-now'`: swap at once. | `'replace-latest'` |
 | `position` | `'top'` or `'bottom'` | `'top'` |
 | `offset` | Extra distance from the edge, in px | `0` |
 | `tapToDismiss` | Click the island to close it | `true` |
 | `swipeToDismiss` | Drag it toward the edge to close it | `true` |
 | `direction` | `'ltr'` or `'rtl'` | the page's |
-| `colorScheme` | `'auto'` (follows `prefers-color-scheme`), `'light'` or `'dark'` | `'auto'` |
+| `colorScheme` | `'auto'` (follows the system), `'light'` or `'dark'` | `'auto'` |
 | `accessibilityHint` | Screen reader hint for clicking the island | `'Dismiss'` |
 | `classNames` | `{ island, content, icon, title, body, action }` | none |
 | `haptics`, `sound` | `(type) => void`, called for each message | none |
@@ -239,7 +240,7 @@ Layers apply in order, each over the one before: library defaults → `theme` �
 </details>
 
 <details>
-<summary><b>Theme</b></summary>
+<summary><b>Theme options</b></summary>
 
 | Key | Default |
 | --- | --- |
@@ -247,49 +248,47 @@ Layers apply in order, each over the one before: library defaults → `theme` �
 | `border` | `rgba(255,255,255,0.10)`, `0.20` in dark mode |
 | `title`, `body` | `#FFFFFF`, `rgba(255,255,255,0.72)` |
 | `accent` | success `#34C759`, error `#FF453A`, info `#0A84FF`, loading `#FFFFFF` |
-| `iconDisc` | the accent at 15 % (needs a `#RGB` or `#RRGGBB` accent, else a neutral disc) |
+| `iconDisc` | the accent at 15 % |
 | `actionBackground`, `actionText` | the accent, `#0A0A0A` |
-| `pillWidth`, `pillHeight` | `120`, `36`: the resting size it opens from and folds back to |
+| `pillWidth`, `pillHeight` | `120`, `36` |
 | `heroSize`, `heroIconSize`, `iconSize` | `116`, `64`, `20` |
-| `maxWidth`, `maxWidthRatio` | `560`, `0.95` of the window width |
+| `maxWidth`, `maxWidthRatio` | `560`, `0.95` of the window |
 | `radius`, `heroRadius` | `22`, `36` |
 | `shadow` | any CSS `box-shadow` |
-| `fontFamily`, `titleFontFamily` | the system font |
-| `arabicFontFamily`, `arabicTitleFontFamily` | the Latin fonts |
+| `fontFamily`, `titleFontFamily`, `arabicFontFamily`, `arabicTitleFontFamily` | the system font |
 | `titleStyle`, `bodyStyle` | any CSS properties |
 | `icon`, `heroIcon` | built-in tick, warning sign, info sign, spinner |
 
 </details>
 
 <details>
-<summary><b>Motion</b></summary>
+<summary><b>Motion options</b></summary>
 
 | Key | Default |
 | --- | --- |
 | `hero` | `true` |
 | `heroHoldMs` | `900` |
 | `readMs`, `readWithActionMs` | `1600`, `3500` |
-| `open`, `morph` | `{ type: 'spring', damping: 17, stiffness: 210, mass: 0.9 }`, or `{ type: 'timing', duration, cssEasing }` |
-| `reducedMotion` | `'system'` (follows `prefers-reduced-motion`), `'always'` or `'never'` |
+| `open`, `morph` | `{ type: 'spring', damping: 17, stiffness: 210, mass: 0.9 }` or `{ type: 'timing', duration, cssEasing }` |
+| `reducedMotion` | `'system'`, `'always'` or `'never'` |
 
 </details>
 
 <details>
 <summary><b>Options for one message</b></summary>
 
-| Option | Type | Default |
+| Option | What it does | Default |
 | --- | --- | --- |
-| `body` | `string` | none |
-| `icon` | element, or `({ size, color }) => element` | by type |
-| `heroIcon` | same, for the big opening | `icon` |
-| `action` | `{ label, onPress, icon? }`; with an `icon`, only the icon shows | none |
-| `duration` | reading time in ms; `Infinity` keeps it until dismissed | `1600`, `3500` with an action |
-| `hero` | show the big icon first | `true` |
-| `theme`, `motion` | partial overrides for this message | none |
+| `body` | Second line | none |
+| `icon`, `heroIcon` | Element, or `({ size, color }) => element` | by type |
+| `action` | `{ label, onPress, icon? }` | none |
+| `duration` | Reading time in ms; `Infinity` keeps it | `1600`, `3500` with an action |
+| `hero` | Show the big icon first | `true` |
+| `theme`, `motion` | Overrides for this message | none |
 | `haptic` | `false` skips the haptics and sound hooks | `true` |
-| `onShow`, `onHide` | `() => void` | none |
-| `accessibilityLabel` | what screen readers say | title and body |
-| slots | `renderIcon`, `renderTitle`, `renderBody`, `renderAction`, `renderContent` | none |
+| `onShow`, `onHide` | Callbacks | none |
+| `accessibilityLabel` | What screen readers say | title and body |
+| `renderIcon` … `renderContent` | Slots | none |
 
 </details>
 
@@ -302,35 +301,23 @@ Layers apply in order, each over the one before: library defaults → `theme` �
 | `island.promise(promise, { loading, success, error })` | your promise |
 | `island.update(id, changes)` | |
 | `island.dismiss(id)` · `island.dismissAll()` | |
-| `useIsland()` | the same API, plus `current`: the message on screen |
+| `useIsland()` | the same API, plus `current` |
 | `<IslandHost />` · `<IslandProvider config>` | |
 
-Unknown ids are ignored, so `dismiss` and `update` are always safe to call.
+Unknown ids are ignored, so `dismiss` and `update` are always safe.
 
-## Accessibility
+## Accessibility & browsers
 
-- Messages are read by screen readers through live regions: errors right away, the others politely. A promise's result is read too.
-- Escape closes the island (unless something else already handled that Escape). Its action is a real button; while the pointer or the focus is on the island, it stays open.
-- With `prefers-reduced-motion`, it simply fades in and out.
+- Screen readers hear each message through live regions; errors right away, the others politely.
+- Escape closes the island. The action is a real button, and the island waits while it is hovered or focused.
+- `prefers-reduced-motion` turns the motion into a simple fade.
+- Chrome, Edge, Firefox and Safari from 2023. Older browsers get a plain ease-out and a high `z-index` instead of the top layer.
+- ESM only. Jest setups that do not transform `node_modules` need it in `transformIgnorePatterns`.
 
-## Browsers
+## Related
 
-Chrome, Edge, Firefox and Safari with the Web Animations API and CSS `linear()` easing (2023 and later). On older browsers springs fall back to a plain ease-out, and without the popover API the island uses a very high `z-index` instead of the top layer.
-
-The package is ESM only. Node 20.19+ and 22+ can `require()` it; Jest setups that do not transform `node_modules` need it added to `transformIgnorePatterns`.
-
-## Playground
-
-Live: **[911rs.github.io/react-island-toast](https://911rs.github.io/react-island-toast/)**. To run it locally:
-
-```sh
-git clone https://github.com/911RS/react-island-toast && cd react-island-toast
-npm install && npm run playground
-```
-
-## Also for React Native
-
-The same island, API and options for iOS and Android: [react-native-island-toast](https://github.com/911RS/react-native-island-toast).
+- **[react-native-island-toast](https://github.com/911RS/react-native-island-toast)**: the same island for iOS and Android.
+- **[Live demo](https://911rs.github.io/react-island-toast/)**, or run it locally: `npm install && npm run playground`.
 
 ## License
 
