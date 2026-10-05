@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.2
+
+- Reorganized README
+
 ## 0.1.1
 
 - README links to the live demo
